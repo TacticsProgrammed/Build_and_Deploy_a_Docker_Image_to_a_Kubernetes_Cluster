@@ -1,0 +1,46 @@
+
+------------------------------------------------------------------------>Welcome to TacticsProgrammed <-------------------------------------------------------------------------
+
+Build and Deploy a Docker Image to a Kubernetes Cluster
+
+Following are the Challenges to Build and Deploy a Docker Image to a Kubernetes Cluster
+
+1.A new Kubernetes cluster exists (zone: us-central1-a).
+2.An application image with a v1 tag has been pushed to the gcr.io repository.
+3.Check that an application has been deployed to the cluster.
+4.Test that a service exists that responds to requests like Echo-app.
+
+
+We have to solve all the tasks step by step
+
+
+
+
+gsutil cp gs://sureskills-ql/challenge-labs/ch04-kubernetes-app-deployment/echo-web.tar.gz .
+
+OR
+
+gsutil cp gs://$DEVSHELL_PROJECT_ID/echo-web.tar.gz .
+
+tar -xvf echo-web.tar.gz
+
+gcloud builds submit --tag gcr.io/$DEVSHELL_PROJECT_ID/echo-app:v1 .
+
+gcloud container clusters create echo-cluster --num-nodes 2 --zone us-central1-a --machine-type n1-standard-2
+
+kubectl create deployment echo-web --image=gcr.io/qwiklabs-resources/echo-app:v1 .
+
+kubectl expose deployment echo-web --type=LoadBalancer --port=80 --target-port=8000
+
+kubectl get svc
+
+kubectl create configmap special-config --from-literal=special.how=very --from-literal=special.type='charm'
+configmap "special-config" created
+
+kubectl create secret generic --dry-run -oj json \
+mysecretname \
+--from-literal=KEY=value \
+| kubeseal --format yaml
+
+********************************************************************************************************************************************************************************
+
